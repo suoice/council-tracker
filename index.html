@@ -3,28 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Council Nexus | Task Dashboard</title>
+    <title>Council Nexus</title>
     
-    <!-- 1. Tailwind CSS (Styling Engine) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. Lucide Icons -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- 3. Google Fonts (Inter) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Fonts: Plus Jakarta Sans (Modern, Geometric) -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Custom Config for Tailwind -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                     },
                     colors: {
-                        slate: { 850: '#1e293b' } // Custom dark shade if needed
+                        brand: {
+                            black: '#0f1419', // X/Twitter Black
+                            gray: '#536471',
+                            light: '#eff3f4',
+                            accent: '#1d9bf0', // Staple Blue
+                            success: '#00ba7c',
+                            danger: '#f91880',
+                            warn: '#ffd400'
+                        }
                     }
                 }
             }
@@ -32,401 +38,471 @@
     </script>
 
     <style>
-        /* Custom Scrollbar for the panel */
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+        body { background-color: #ffffff; }
+        .sidebar-sticky { position: sticky; top: 0; height: 100vh; }
         
-        /* Glassmorphism Utilities */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+        /* Smooth Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: #e5e7eb; border-radius: 20px; }
+
+        /* Instagram-style Ring Animation */
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(29, 155, 240, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(29, 155, 240, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(29, 155, 240, 0); }
         }
-        
-        /* Loading Spinner Animation */
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #6366f1;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .animate-ring { animation: pulse-ring 2s infinite; }
     </style>
 </head>
-<body class="min-h-screen bg-slate-50 text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+<body class="text-brand-black overflow-x-hidden">
 
-    <div class="max-w-[1600px] mx-auto p-4 lg:p-8">
-        
-        <!-- HEADER -->
-        <header class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-                <h1 class="text-3xl font-bold tracking-tight text-slate-900 mb-1 flex items-center gap-3">
-                    Council Nexus <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full font-mono">v2.0</span>
-                </h1>
-                <p class="text-slate-500 font-medium">Live Transaction & Accountability Tracker</p>
-            </div>
-            
-            <div class="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-slate-200">
-                <div class="relative flex items-center">
-                    <i data-lucide="search" class="absolute left-3 w-4 h-4 text-slate-400"></i>
-                    <input type="text" id="searchInput" placeholder="Find executive..." 
-                        class="pl-10 pr-4 py-2 bg-transparent border-none outline-none text-sm w-48 placeholder:text-slate-400 font-medium">
+    <div class="flex min-h-screen">
+
+        <!-- 1. LEFT SIDEBAR (Desktop) -->
+        <aside class="hidden lg:flex flex-col w-[275px] border-r border-gray-100 px-4 py-6 sidebar-sticky bg-white z-50">
+            <!-- Logo -->
+            <div class="px-4 mb-8">
+                <div class="w-10 h-10 bg-brand-black text-white rounded-xl flex items-center justify-center text-xl font-bold mb-2">
+                    CN
                 </div>
-                <div class="h-6 w-px bg-slate-200"></div>
-                <select id="statusFilter" class="bg-transparent border-none text-sm font-bold text-slate-700 outline-none cursor-pointer pr-2">
-                    <option value="all">All Status</option>
-                    <option value="overdue">Overdue</option>
+                <h1 class="text-xl font-bold tracking-tight">Council Nexus</h1>
+                <p class="text-xs text-brand-gray font-medium">Task OS v2.1</p>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex-1 space-y-1">
+                <a href="#" class="flex items-center gap-4 px-4 py-3 text-lg font-bold bg-brand-light rounded-full transition-colors">
+                    <i data-lucide="layout-grid" class="w-6 h-6"></i> Dashboard
+                </a>
+                <a href="#" class="flex items-center gap-4 px-4 py-3 text-lg font-medium text-brand-gray hover:bg-gray-50 hover:text-brand-black rounded-full transition-colors">
+                    <i data-lucide="users" class="w-6 h-6"></i> Executives
+                </a>
+                <a href="#" class="flex items-center gap-4 px-4 py-3 text-lg font-medium text-brand-gray hover:bg-gray-50 hover:text-brand-black rounded-full transition-colors">
+                    <i data-lucide="file-text" class="w-6 h-6"></i> History Log
+                </a>
+            </nav>
+
+            <!-- User Profile Snippet -->
+            <div class="mt-auto px-4 py-4 border-t border-gray-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-500">
+                        GS
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold">Guest Viewer</p>
+                        <p class="text-xs text-brand-gray">Read-Only Mode</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 2. MAIN FEED (Center) -->
+        <main class="flex-1 max-w-4xl w-full border-r border-gray-100 min-h-screen">
+            
+            <!-- Mobile Header -->
+            <header class="lg:hidden sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-100 p-4 z-40 flex justify-between items-center">
+                <div class="font-bold text-xl">Council Nexus</div>
+                <div class="w-8 h-8 bg-brand-black text-white rounded-full flex items-center justify-center font-bold text-sm">CN</div>
+            </header>
+
+            <!-- Stats Row (Donezo Style) -->
+            <div class="p-6 grid grid-cols-2 md:grid-cols-4 gap-4 border-b border-gray-100 bg-white">
+                <div class="p-4 rounded-3xl bg-gray-50 border border-gray-100">
+                    <div class="flex items-center gap-2 mb-2 text-brand-gray">
+                        <i data-lucide="zap" class="w-4 h-4"></i>
+                        <span class="text-xs font-bold uppercase">Active</span>
+                    </div>
+                    <div class="text-3xl font-extrabold" id="stat-active">--</div>
+                </div>
+                <div class="p-4 rounded-3xl bg-brand-danger/5 border border-brand-danger/10">
+                    <div class="flex items-center gap-2 mb-2 text-brand-danger">
+                        <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                        <span class="text-xs font-bold uppercase">Overdue</span>
+                    </div>
+                    <div class="text-3xl font-extrabold text-brand-danger" id="stat-overdue">--</div>
+                </div>
+                <div class="p-4 rounded-3xl bg-brand-warn/10 border border-brand-warn/20">
+                    <div class="flex items-center gap-2 mb-2 text-yellow-700">
+                        <i data-lucide="clock" class="w-4 h-4"></i>
+                        <span class="text-xs font-bold uppercase">Urgent</span>
+                    </div>
+                    <div class="text-3xl font-extrabold text-yellow-700" id="stat-urgent">--</div>
+                </div>
+                <div class="p-4 rounded-3xl bg-brand-success/5 border border-brand-success/10">
+                    <div class="flex items-center gap-2 mb-2 text-brand-success">
+                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                        <span class="text-xs font-bold uppercase">On Track</span>
+                    </div>
+                    <div class="text-3xl font-extrabold text-brand-success" id="stat-normal">--</div>
+                </div>
+            </div>
+
+            <!-- "Stories" Row (Executives) -->
+            <div class="px-6 py-6 border-b border-gray-100 overflow-x-auto no-scrollbar">
+                <h2 class="text-lg font-extrabold mb-4 flex items-center gap-2">
+                    Current Board
+                    <span class="text-xs font-normal text-brand-gray px-2 py-1 bg-gray-100 rounded-full" id="exec-count">0</span>
+                </h2>
+                
+                <div class="flex gap-4 min-w-max" id="executives-list">
+                    <!-- Executives Injected Here -->
+                    <div class="animate-pulse flex gap-4">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full"></div>
+                        <div class="w-16 h-16 bg-gray-100 rounded-full"></div>
+                        <div class="w-16 h-16 bg-gray-100 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search & Filter -->
+            <div class="sticky top-0 lg:static bg-white/90 backdrop-blur-sm z-30 px-6 py-3 border-b border-gray-100 flex gap-3 items-center">
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search tasks..." class="w-full bg-gray-100 rounded-full py-2 pl-10 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-accent/50">
+                </div>
+                <select id="filterStatus" class="bg-gray-100 rounded-full px-4 py-2 text-sm font-bold text-gray-600 focus:outline-none cursor-pointer">
+                    <option value="all">All</option>
                     <option value="urgent">Urgent</option>
-                    <option value="normal">On Track</option>
+                    <option value="overdue">Overdue</option>
                 </select>
-                <div id="loadingIndicator" class="hidden px-2">
-                    <div class="loader"></div>
-                </div>
-            </div>
-        </header>
-
-        <!-- STATS GRID -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-            <!-- Stat Cards injected by JS -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
-                <div><p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Total Active</p><h3 id="stat-total" class="text-3xl font-bold text-slate-800">--</h3></div>
-                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><i data-lucide="zap"></i></div>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
-                <div><p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Overdue</p><h3 id="stat-overdue" class="text-3xl font-bold text-slate-800">--</h3></div>
-                <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center"><i data-lucide="alert-circle"></i></div>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
-                <div><p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">Urgent</p><h3 id="stat-urgent" class="text-3xl font-bold text-slate-800">--</h3></div>
-                <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center"><i data-lucide="clock"></i></div>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
-                <div><p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-1">On Track</p><h3 id="stat-normal" class="text-3xl font-bold text-slate-800">--</h3></div>
-                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i data-lucide="check-circle"></i></div>
-            </div>
-        </div>
-
-        <!-- MAIN CONTENT -->
-        <div class="flex flex-col lg:flex-row gap-8 items-start relative">
-            
-            <!-- LEFT: Executive Grid -->
-            <div class="flex-1 w-full">
-                <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 min-h-[500px]">
-                    <h2 class="text-lg font-bold text-slate-800 mb-8 flex items-center gap-2">
-                        <i data-lucide="users" class="text-indigo-500 w-5 h-5"></i> Board Overview
-                    </h2>
-                    
-                    <div id="executivesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-y-12 gap-x-6">
-                        <!-- Executives injected here by JS -->
-                    </div>
-                    
-                    <div id="noResults" class="hidden py-20 text-center text-slate-400">
-                        <p>No executives found matching criteria.</p>
-                    </div>
+                <div id="loader" class="hidden">
+                    <i data-lucide="loader-2" class="w-5 h-5 animate-spin text-brand-accent"></i>
                 </div>
             </div>
 
-            <!-- RIGHT: Details Panel (Sticky) -->
-            <div class="w-full lg:w-[450px] shrink-0 lg:sticky lg:top-8 z-20">
-                <div id="detailsPanel" class="glass-panel rounded-3xl shadow-xl transition-all duration-500 overflow-hidden opacity-50 translate-x-4 grayscale pointer-events-none">
-                    
-                    <!-- Empty State -->
-                    <div id="panelEmptyState" class="h-[400px] flex flex-col items-center justify-center text-center p-8">
-                        <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
-                            <i data-lucide="user" class="w-8 h-8 text-slate-300"></i>
-                        </div>
-                        <h3 class="text-lg font-bold text-slate-800 mb-2">Select an Executive</h3>
-                        <p class="text-slate-500 text-sm max-w-[200px]">Tap a circle to view active tasks and handoff status.</p>
+            <!-- Feed Content -->
+            <div class="bg-gray-50 min-h-screen">
+                <div id="feed-container" class="divide-y divide-gray-100">
+                    <!-- Tasks Injected Here -->
+                    <div class="p-12 text-center text-gray-400">
+                        Waiting for data connection...
                     </div>
-
-                    <!-- Active State (Hidden by default) -->
-                    <div id="panelContent" class="hidden">
-                        <!-- Header -->
-                        <div class="p-6 bg-gradient-to-r from-indigo-600 to-violet-600 text-white relative overflow-hidden">
-                            <i data-lucide="zap" class="absolute top-0 right-0 w-32 h-32 opacity-10 -mr-4 -mt-4"></i>
-                            <button onclick="closePanel()" class="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-full transition cursor-pointer">
-                                <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-
-                            <div class="relative z-10 flex items-center gap-4">
-                                <div id="panelAvatar" class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl font-bold border border-white/30">
-                                    --
-                                </div>
-                                <div>
-                                    <h2 id="panelName" class="text-xl font-bold">--</h2>
-                                    <p id="panelRole" class="text-indigo-100 text-sm opacity-90">--</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Task List -->
-                        <div class="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar bg-white/50">
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Assigned Transactions</h3>
-                                <span id="panelCount" class="text-xs font-semibold bg-white border border-slate-200 px-2 py-1 rounded-md text-slate-600">0 Active</span>
-                            </div>
-                            
-                            <div id="panelTasks" class="space-y-4">
-                                <!-- Tasks injected here -->
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
-        </div>
+        </main>
+
+        <!-- 3. RIGHT SIDEBAR (Details) - "What's Happening" Style -->
+        <aside class="hidden xl:block w-[350px] p-6 sidebar-sticky bg-white overflow-y-auto">
+            <div id="details-panel-empty" class="h-full flex flex-col items-center justify-center text-center text-gray-400">
+                <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4">
+                    <i data-lucide="mouse-pointer-2" class="w-8 h-8 text-gray-300"></i>
+                </div>
+                <h3 class="font-bold text-gray-900">Select an item</h3>
+                <p class="text-sm mt-2 max-w-[200px]">Click on an executive or a task to view full history and details.</p>
+            </div>
+
+            <div id="details-panel-content" class="hidden space-y-6">
+                <!-- Header -->
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center gap-3">
+                        <div id="detail-avatar" class="w-12 h-12 rounded-xl bg-brand-black text-white flex items-center justify-center text-lg font-bold">--</div>
+                        <div>
+                            <h2 id="detail-title" class="text-lg font-extrabold leading-tight">--</h2>
+                            <p id="detail-subtitle" class="text-sm text-brand-gray">--</p>
+                        </div>
+                    </div>
+                    <span id="detail-badge" class="px-2 py-1 text-xs font-bold bg-gray-100 rounded">--</span>
+                </div>
+
+                <!-- Context Card -->
+                <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100 space-y-3">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-brand-gray">Deadline</span>
+                        <span id="detail-deadline" class="font-bold">--</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-brand-gray">Requested By</span>
+                        <span id="detail-requester" class="font-medium">--</span>
+                    </div>
+                    <div id="detail-blocker-box" class="hidden mt-2 p-3 bg-red-50 text-red-700 text-xs rounded-xl border border-red-100 flex gap-2 items-start">
+                        <i data-lucide="alert-triangle" class="w-4 h-4 shrink-0"></i>
+                        <span id="detail-blocker">--</span>
+                    </div>
+                </div>
+
+                <!-- History Timeline -->
+                <div>
+                    <h3 class="font-bold text-sm uppercase tracking-wider text-gray-400 mb-4">Activity Log</h3>
+                    <div id="history-list" class="space-y-0 relative">
+                        <!-- History Items Injected -->
+                    </div>
+                </div>
+            </div>
+        </aside>
+
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // --- CONFIGURATION ---
-        // PASTE YOUR GOOGLE APPS SCRIPT URL HERE
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzsc2YdwDU153vcGjoMgpcwgLnsc3i1d4ZsI2MOFpWPT0xpGQ-NXY5d8rGz_ucJd3kmWw/exec'; 
+        // *** CONFIGURATION ***
+        const API_URL = 'PASTE_YOUR_NEW_WEB_APP_URL_HERE'; 
 
-        // --- STATIC DATA (Executives) ---
-        const executives = [
-            { id: 1, name: "Maria Santos", position: "President", committee: "Executive", image: "MS" },
-            { id: 2, name: "Juan Cruz", position: "Vice President", committee: "Executive", image: "JC" },
-            { id: 3, name: "Ana Reyes", position: "PC Co-Head", committee: "Presidential Commissioners", image: "AR" },
-            { id: 4, name: "Carlos Tan", position: "PC Co-Head", committee: "Presidential Commissioners", image: "CT" },
-            { id: 5, name: "Sofia Lopez", position: "Audit Head", committee: "Audit", image: "SL" },
-            { id: 6, name: "Miguel Garcia", position: "Audit Co-Head", committee: "Audit", image: "MG" },
-            { id: 7, name: "Isabel Cruz", position: "Secretariat Head", committee: "Secretariat", image: "IC" },
-            { id: 8, name: "Ramon Del Rosario", position: "Secretariat Co-Head", committee: "Secretariat", image: "RD" },
-            { id: 9, name: "Patricia Lim", position: "Finance Head", committee: "Finance", image: "PL" },
-            { id: 10, name: "Diego Fernandez", position: "Finance Co-Head", committee: "Finance", image: "DF" },
-            { id: 11, name: "Carmen Valdez", position: "Events Head", committee: "Events", image: "CV" },
-            { id: 12, name: "Ricardo Morales", position: "Events Co-Head", committee: "Events", image: "RM" },
-            { id: 13, name: "Lucia Ramos", position: "PR Head", committee: "Public Relations", image: "LR" },
-            { id: 14, name: "Andre Bautista", position: "PR Co-Head", committee: "Public Relations", image: "AB" },
-            { id: 15, name: "Nina Castillo", position: "Membership Head", committee: "Membership", image: "NC" }
-        ];
+        // State
+        let db = { executives: [], tasks: [], history: [] };
+        let selectedFilter = 'all';
 
-        let allTasks = []; // Will hold data from Google Sheet
-        let selectedExecId = null;
+        // Init
+        window.addEventListener('load', async () => {
+            lucide.createIcons();
+            await fetchData();
+        });
 
-        // --- FETCH DATA ---
-        async function initDashboard() {
-            const loader = document.getElementById('loadingIndicator');
+        async function fetchData() {
+            const loader = document.getElementById('loader');
             loader.classList.remove('hidden');
-
+            
             try {
-                // If the URL is empty, use mock data for demo purposes
-                let data = [];
-                if (GOOGLE_SCRIPT_URL.includes('PASTE_YOUR')) {
-                    console.warn("No API URL provided. Using Mock Data.");
-                    data = getMockData(); 
+                if (API_URL.includes('PASTE')) {
+                    console.warn("Using Mock Data");
+                    db = getMockData();
                 } else {
-                    const response = await fetch(GOOGLE_SCRIPT_URL);
-                    data = await response.json();
+                    const res = await fetch(API_URL);
+                    db = await res.json();
                 }
-
-                // Process Data (Convert strings to usable formats)
-                allTasks = data.map(row => ({
-                    id: row.TaskID || 'N/A',
-                    description: row.Description || 'No description',
-                    currentOwner: parseInt(row.OwnerID),
-                    status: (row.Status || 'normal').toLowerCase(),
-                    deadline: row.Deadline,
-                    requestedBy: row.RequestedBy || 'Unknown',
-                    blockers: row.Blockers || 'None',
-                    daysRemaining: calculateDaysRemaining(row.Deadline)
-                }));
-
-                updateStats();
-                renderExecutives();
                 
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                alert("Failed to load data from Google Sheets. check console.");
+                renderStats();
+                renderExecutives();
+                renderFeed();
+                
+            } catch (e) {
+                console.error(e);
+                alert("Error loading data. See console.");
             } finally {
                 loader.classList.add('hidden');
             }
         }
 
-        // --- RENDERING ---
+        // --- RENDERERS ---
+
+        function renderStats() {
+            document.getElementById('stat-active').textContent = db.tasks.length;
+            document.getElementById('stat-overdue').textContent = db.tasks.filter(t => t.Status.toLowerCase() === 'overdue').length;
+            document.getElementById('stat-urgent').textContent = db.tasks.filter(t => t.Status.toLowerCase() === 'urgent').length;
+            document.getElementById('stat-normal').textContent = db.tasks.filter(t => t.Status.toLowerCase() === 'normal').length;
+            document.getElementById('exec-count').textContent = db.executives.length;
+        }
+
         function renderExecutives() {
-            const grid = document.getElementById('executivesGrid');
-            grid.innerHTML = '';
-            
-            const filterText = document.getElementById('searchInput').value.toLowerCase();
-            const filterStatus = document.getElementById('statusFilter').value;
+            const container = document.getElementById('executives-list');
+            container.innerHTML = '';
 
-            const filteredExecs = executives.filter(exec => {
-                const execTasks = allTasks.filter(t => t.currentOwner === exec.id);
+            db.executives.forEach(exec => {
+                // Count active tasks for this exec
+                const taskCount = db.tasks.filter(t => t.Current_Owner_ID == exec.Executive_ID).length;
+                const hasUrgent = db.tasks.some(t => t.Current_Owner_ID == exec.Executive_ID && (t.Status === 'urgent' || t.Status === 'overdue'));
                 
-                // Text Search
-                const matchesName = exec.name.toLowerCase().includes(filterText) || 
-                                  exec.committee.toLowerCase().includes(filterText);
-                
-                // Status Filter
-                if (filterStatus === 'all') return matchesName;
-                return matchesName && execTasks.some(t => t.status === filterStatus);
-            });
+                const ringColor = hasUrgent ? 'border-brand-danger' : (taskCount > 0 ? 'border-brand-accent' : 'border-gray-200');
+                const ringAnim = hasUrgent ? 'animate-ring' : '';
 
-            if (filteredExecs.length === 0) {
-                document.getElementById('noResults').classList.remove('hidden');
-                return;
-            } else {
-                document.getElementById('noResults').classList.add('hidden');
-            }
-
-            filteredExecs.forEach(exec => {
-                const execTasks = allTasks.filter(t => t.currentOwner === exec.id);
-                const isActive = selectedExecId === exec.id;
-                
-                // Determine Ring Color
-                let ringClass = "ring-slate-200 ring-offset-slate-50"; // Default
-                if (execTasks.some(t => t.status === 'overdue')) ringClass = "ring-rose-500 ring-offset-rose-50";
-                else if (execTasks.some(t => t.status === 'urgent')) ringClass = "ring-amber-500 ring-offset-amber-50";
-                else if (execTasks.length > 0) ringClass = "ring-indigo-500 ring-offset-indigo-50";
-
-                const card = document.createElement('div');
-                card.className = `group cursor-pointer flex flex-col items-center transition-all duration-300 ${isActive ? 'scale-110' : 'hover:scale-105 opacity-90 hover:opacity-100'}`;
-                card.onclick = () => openPanel(exec);
-                
-                card.innerHTML = `
-                    <div class="relative w-20 h-20 rounded-full flex items-center justify-center mb-3
-                        bg-gradient-to-br from-slate-100 to-slate-200 text-slate-600 font-bold text-xl
-                        shadow-lg ring-4 ring-offset-4 ${ringClass} transition-all duration-500">
-                        ${exec.image}
-                        ${execTasks.length > 0 ? `
-                        <div class="absolute -top-1 -right-1 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-md border border-slate-100">
-                             <span class="text-xs font-bold text-slate-800">${execTasks.length}</span>
+                const el = document.createElement('button');
+                el.className = 'flex flex-col items-center gap-2 group min-w-[72px]';
+                el.onclick = () => selectExecutive(exec);
+                el.innerHTML = `
+                    <div class="relative w-16 h-16 rounded-full p-[2px] border-2 ${ringColor} ${ringAnim} bg-white transition-transform group-hover:scale-105">
+                        <div class="w-full h-full rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600 border border-white">
+                            ${exec.Image_Initials}
+                        </div>
+                        ${taskCount > 0 ? `
+                        <div class="absolute bottom-0 right-0 w-5 h-5 bg-brand-black text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">
+                            ${taskCount}
                         </div>` : ''}
                     </div>
-                    <div class="text-center w-full">
-                        <p class="text-sm font-bold truncate transition-colors ${isActive ? 'text-indigo-600' : 'text-slate-800'}">${exec.name}</p>
-                        <p class="text-[10px] uppercase tracking-wider font-semibold text-slate-400 truncate">${exec.committee}</p>
-                    </div>
+                    <span class="text-[11px] font-medium text-gray-600 truncate w-full text-center group-hover:text-black">
+                        ${exec.Name.split(' ')[0]}
+                    </span>
                 `;
-                grid.appendChild(card);
+                container.appendChild(el);
             });
         }
 
-        function openPanel(exec) {
-            selectedExecId = exec.id;
-            renderExecutives(); // Re-render to update scaling/active states
+        function renderFeed(filterExecId = null) {
+            const container = document.getElementById('feed-container');
+            container.innerHTML = '';
 
-            // Update Panel UI
-            const panel = document.getElementById('detailsPanel');
-            const content = document.getElementById('panelContent');
-            const empty = document.getElementById('panelEmptyState');
-
-            document.getElementById('panelName').textContent = exec.name;
-            document.getElementById('panelRole').textContent = exec.position;
-            document.getElementById('panelAvatar').textContent = exec.image;
-
-            // Filter Tasks
-            const myTasks = allTasks.filter(t => t.currentOwner === exec.id);
-            document.getElementById('panelCount').textContent = `${myTasks.length} Active`;
+            let filtered = db.tasks;
             
-            const taskContainer = document.getElementById('panelTasks');
-            taskContainer.innerHTML = '';
-
-            if (myTasks.length === 0) {
-                taskContainer.innerHTML = `
-                    <div class="py-12 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                        <i data-lucide="check-circle" class="w-10 h-10 mx-auto mb-3 text-emerald-400"></i>
-                        <p class="text-slate-600 font-medium">All clear!</p>
-                        <p class="text-slate-400 text-xs mt-1">No active transactions.</p>
-                    </div>
-                `;
-            } else {
-                myTasks.forEach(task => {
-                    const statusConfig = getStatusConfig(task.status);
-                    const dateStr = task.deadline ? new Date(task.deadline).toLocaleDateString() : 'No Date';
-                    
-                    const el = document.createElement('div');
-                    el.className = "group bg-white rounded-xl p-4 border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all";
-                    el.innerHTML = `
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="font-mono text-[10px] text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">${task.id}</span>
-                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 border ${statusConfig.class}">
-                                <i data-lucide="${statusConfig.icon}" class="w-3 h-3"></i> ${task.status.toUpperCase()}
-                            </span>
-                        </div>
-                        <h4 class="font-bold text-slate-800 text-sm leading-snug mb-3">${task.description}</h4>
-                        <div class="grid grid-cols-2 gap-2 text-xs text-slate-500 mb-2 bg-slate-50 p-3 rounded-lg">
-                            <div class="flex items-center gap-2">
-                                <i data-lucide="calendar" class="w-3 h-3 text-indigo-400"></i>
-                                <span class="${task.daysRemaining < 0 ? 'text-rose-600 font-bold' : ''}">${dateStr}</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <i data-lucide="user" class="w-3 h-3 text-indigo-400"></i>
-                                <span class="truncate">${task.requestedBy}</span>
-                            </div>
-                        </div>
-                        ${task.blockers !== 'None' ? `
-                            <div class="text-xs bg-orange-50 text-orange-700 p-2.5 rounded-lg flex items-start gap-2 border border-orange-100">
-                                <i data-lucide="alert-triangle" class="w-3 h-3 mt-0.5 shrink-0"></i>
-                                <span>${task.blockers}</span>
-                            </div>` : ''}
-                    `;
-                    taskContainer.appendChild(el);
-                });
+            // Filter by Executive Click
+            if (filterExecId) {
+                filtered = filtered.filter(t => t.Current_Owner_ID == filterExecId);
             }
 
-            // Animate Panel Open
-            panel.classList.remove('opacity-50', 'translate-x-4', 'grayscale', 'pointer-events-none');
-            panel.classList.add('opacity-100', 'translate-x-0');
-            empty.classList.add('hidden');
-            content.classList.remove('hidden');
-            
+            // Filter by Dropdown
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('filterStatus').value;
+
+            filtered = filtered.filter(t => {
+                const matchesSearch = t.Description.toLowerCase().includes(search) || t.Task_ID.toLowerCase().includes(search);
+                const matchesStatus = statusFilter === 'all' || t.Status.toLowerCase() === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="p-10 text-center text-gray-400">No tasks found.</div>`;
+                return;
+            }
+
+            filtered.forEach(task => {
+                const owner = db.executives.find(e => e.Executive_ID == task.Current_Owner_ID) || { Name: 'Unknown', Image_Initials: '??' };
+                const isUrgent = task.Status.toLowerCase() !== 'normal';
+                
+                const el = document.createElement('div');
+                el.className = 'p-6 bg-white hover:bg-gray-50 transition-colors cursor-pointer group border-b border-gray-100';
+                el.onclick = () => selectTask(task, owner);
+                
+                el.innerHTML = `
+                    <div class="flex gap-4">
+                        <div class="shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">
+                                ${owner.Image_Initials}
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start mb-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-gray-900">${owner.Name}</span>
+                                    <span class="text-gray-500 text-sm">@${owner.Committee}</span>
+                                    <span class="text-gray-300 text-xs">•</span>
+                                    <span class="text-xs text-gray-400 font-mono">${task.Task_ID}</span>
+                                </div>
+                                <span class="text-xs font-bold px-2 py-1 rounded-full ${getStatusStyle(task.Status)}">
+                                    ${task.Status.toUpperCase()}
+                                </span>
+                            </div>
+                            
+                            <p class="text-gray-900 text-[15px] leading-snug mb-3">
+                                ${task.Description}
+                            </p>
+
+                            <div class="flex items-center gap-4 text-xs text-gray-500">
+                                <div class="flex items-center gap-1 ${isUrgent ? 'text-brand-danger font-bold' : ''}">
+                                    <i data-lucide="calendar" class="w-3 h-3"></i>
+                                    ${new Date(task.Deadline).toLocaleDateString()}
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i data-lucide="user-circle" class="w-3 h-3"></i>
+                                    Req: ${task.Requested_By.split(' ')[0]}
+                                </div>
+                                ${task.Blockers && task.Blockers !== 'None' ? `
+                                <div class="flex items-center gap-1 text-orange-600 font-medium">
+                                    <i data-lucide="alert-triangle" class="w-3 h-3"></i>
+                                    Blocked
+                                </div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
             lucide.createIcons();
         }
 
-        function closePanel() {
-            selectedExecId = null;
-            renderExecutives();
-            const panel = document.getElementById('detailsPanel');
-            panel.classList.add('opacity-50', 'translate-x-4', 'grayscale', 'pointer-events-none');
-            panel.classList.remove('opacity-100', 'translate-x-0');
+        // --- INTERACTIONS ---
+
+        function selectExecutive(exec) {
+            renderFeed(exec.Executive_ID);
+            
+            // Populate Right Panel with Executive Info
+            showDetails(true);
+            document.getElementById('detail-title').textContent = exec.Name;
+            document.getElementById('detail-subtitle').textContent = exec.Position;
+            document.getElementById('detail-avatar').textContent = exec.Image_Initials;
+            document.getElementById('detail-badge').textContent = exec.Committee;
+            
+            // Hide task-specific fields in context card for exec view
+            document.getElementById('detail-deadline').parentElement.classList.add('hidden');
+            document.getElementById('detail-requester').parentElement.classList.add('hidden');
+            document.getElementById('detail-blocker-box').classList.add('hidden');
+            
+            // Show recent history for this person
+            const history = db.history.filter(h => h.Owner_ID == exec.Executive_ID);
+            renderHistoryLog(history);
         }
 
-        // --- UTILS ---
-        function updateStats() {
-            document.getElementById('stat-total').innerText = allTasks.length;
-            document.getElementById('stat-overdue').innerText = allTasks.filter(t => t.status === 'overdue').length;
-            document.getElementById('stat-urgent').innerText = allTasks.filter(t => t.status === 'urgent').length;
-            document.getElementById('stat-normal').innerText = allTasks.filter(t => t.status === 'normal').length;
+        function selectTask(task, owner) {
+            showDetails(true);
+            document.getElementById('detail-title').textContent = task.Task_ID;
+            document.getElementById('detail-subtitle').textContent = task.Description;
+            document.getElementById('detail-avatar').textContent = owner.Image_Initials;
+            document.getElementById('detail-badge').textContent = task.Status;
+            
+            // Show task specific fields
+            document.getElementById('detail-deadline').parentElement.classList.remove('hidden');
+            document.getElementById('detail-deadline').textContent = new Date(task.Deadline).toLocaleDateString();
+            document.getElementById('detail-requester').parentElement.classList.remove('hidden');
+            document.getElementById('detail-requester').textContent = task.Requested_By;
+            
+            const blockerBox = document.getElementById('detail-blocker-box');
+            if (task.Blockers && task.Blockers !== 'None') {
+                blockerBox.classList.remove('hidden');
+                document.getElementById('detail-blocker').textContent = task.Blockers;
+            } else {
+                blockerBox.classList.add('hidden');
+            }
+
+            // Show history for this specific task
+            const history = db.history.filter(h => h.Task_ID == task.Task_ID);
+            renderHistoryLog(history);
         }
 
-        function calculateDaysRemaining(deadlineStr) {
-            if(!deadlineStr) return 0;
-            const today = new Date();
-            const deadline = new Date(deadlineStr);
-            const diff = deadline - today;
-            return Math.ceil(diff / (1000 * 60 * 60 * 24)); 
+        function renderHistoryLog(historyItems) {
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+            
+            if (historyItems.length === 0) {
+                list.innerHTML = '<div class="text-xs text-gray-400 italic">No history recorded.</div>';
+                return;
+            }
+
+            // Sort by date desc
+            historyItems.sort((a,b) => new Date(b.Date) - new Date(a.Date)).forEach((h, idx) => {
+                const isLast = idx === historyItems.length - 1;
+                const el = document.createElement('div');
+                el.className = 'flex gap-3 pb-6 relative';
+                el.innerHTML = `
+                    ${!isLast ? '<div class="absolute left-[5px] top-2 bottom-0 w-[2px] bg-gray-100"></div>' : ''}
+                    <div class="w-3 h-3 rounded-full bg-brand-accent shrink-0 mt-1.5 relative z-10 border-2 border-white ring-1 ring-gray-100"></div>
+                    <div>
+                        <p class="text-xs text-gray-400 font-mono mb-0.5">${new Date(h.Date).toLocaleDateString()}</p>
+                        <p class="text-sm font-bold text-gray-900">${h.Action}</p>
+                        <p class="text-xs text-gray-500 mt-1 bg-gray-50 p-2 rounded">${h.Notes || 'No notes'}</p>
+                    </div>
+                `;
+                list.appendChild(el);
+            });
         }
 
-        function getStatusConfig(status) {
-            switch(status) {
-                case 'overdue': return { class: 'bg-rose-100 text-rose-700 border-rose-200', icon: 'alert-circle' };
-                case 'urgent': return { class: 'bg-amber-100 text-amber-700 border-amber-200', icon: 'clock' };
-                default: return { class: 'bg-emerald-100 text-emerald-700 border-emerald-200', icon: 'check-circle' };
+        function showDetails(show) {
+            const empty = document.getElementById('details-panel-empty');
+            const content = document.getElementById('details-panel-content');
+            if (show) {
+                empty.classList.add('hidden');
+                content.classList.remove('hidden');
+            } else {
+                empty.classList.remove('hidden');
+                content.classList.add('hidden');
+            }
+        }
+
+        function getStatusStyle(status) {
+            switch(status.toLowerCase()) {
+                case 'overdue': return 'bg-brand-danger text-white';
+                case 'urgent': return 'bg-brand-warn text-brand-black';
+                default: return 'bg-brand-success text-white';
             }
         }
 
         function getMockData() {
-            return [
-                { TaskID: "DEMO-01", Description: "Demo Task: Please add your API URL", OwnerID: 3, Status: "urgent", Deadline: "2024-12-25", RequestedBy: "System", Blockers: "None" }
-            ];
+            return {
+                executives: [{ Executive_ID: 1, Name: 'Maria Santos', Position: 'Pres', Committee: 'Exec', Image_Initials: 'MS' }],
+                tasks: [{ Task_ID: 'DEMO-01', Description: 'Demo Task - Please connect API', Current_Owner_ID: 1, Status: 'urgent', Deadline: '2025-01-01', Requested_By: 'System', Blockers: 'None' }],
+                history: []
+            };
         }
 
-        // --- EVENT LISTENERS ---
-        document.getElementById('searchInput').addEventListener('input', renderExecutives);
-        document.getElementById('statusFilter').addEventListener('change', renderExecutives);
-
-        // --- INITIALIZE ---
-        window.addEventListener('load', () => {
-            initDashboard();
-            lucide.createIcons();
-        });
+        // Listeners
+        document.getElementById('searchInput').addEventListener('input', () => renderFeed());
+        document.getElementById('filterStatus').addEventListener('change', () => renderFeed());
 
     </script>
 </body>
