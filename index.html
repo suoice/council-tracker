@@ -238,22 +238,36 @@
             
             const search = document.getElementById('searchInput').value.toLowerCase();
             const statusFilter = document.getElementById('filterStatus').value;
-
+        
             filtered = filtered.filter(t => {
-                const desc = t.Description ? t.Description.toLowerCase() : '';
-                const matchesSearch = desc.includes(search) || (t.Task_ID && t.Task_ID.toLowerCase().includes(search));
-                const matchesStatus = statusFilter === 'all' || (t.Status && t.Status.toLowerCase() === statusFilter);
+                const desc = t.Description ? String(t.Description).toLowerCase() : '';
+                const taskId = t.Task_ID ? String(t.Task_ID).toLowerCase() : '';
+                const matchesSearch = desc.includes(search) || taskId.includes(search);
+                const matchesStatus = statusFilter === 'all' || (t.Status && String(t.Status).toLowerCase() === statusFilter);
                 return matchesSearch && matchesStatus;
             });
-
+        
             if (filtered.length === 0) {
                 container.innerHTML = `<div class="p-12 text-center text-sm text-gray-400 font-mono">NO RECORDS FOUND</div>`;
                 return;
             }
-
+        
             filtered.forEach(task => {
                 const owner = db.executives.find(e => e.Executive_ID == task.Current_Owner_ID) || { Name: 'Unknown', Image_Initials: '??' };
-                const isUrgent = task.Status && task.Status.toLowerCase() !== 'normal';
+                const isUrgent = task.Status && String(task.Status).toLowerCase() !== 'normal';
+                
+                // Safe handling of all task properties
+                const taskId = task.Task_ID || 'N/A';
+                const description = task.Description || 'No description';
+                const status = task.Status || 'unknown';
+                const deadline = task.Deadline ? new Date(task.Deadline).toLocaleDateString() : 'No deadline';
+                
+                // Safe handling of Requested_By with proper string check
+                let requesterDisplay = 'N/A';
+                if (task.Requested_By) {
+                    const reqBy = String(task.Requested_By);
+                    requesterDisplay = reqBy.includes(' ') ? reqBy.split(' ')[0] : reqBy;
+                }
                 
                 const el = document.createElement('div');
                 el.className = 'group p-6 hover:bg-gray-50 transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-brand-green';
@@ -267,14 +281,20 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex justify-between items-start mb-1">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-xs font-mono text-brand-green opacity-80">#${task.Task_ID}</span>
-                                    <h3 class="text-sm font-bold text-gray-900 truncate">${task.Description}</h3>
+                                    <span class="text-xs font-mono text-brand-green opacity-80">#${taskId}</span>
+                                    <h3 class="text-sm font-bold text-gray-900 truncate">${description}</h3>
                                 </div>
-                                <span class="ml-2 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-sm ${getStatusClasses(task.Status)}">${task.Status}</span>
+                                <span class="ml-2 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-sm ${getStatusClasses(status)}">${status}</span>
                             </div>
                             <div class="flex items-center gap-6 mt-3">
-                                <div class="flex items-center gap-2 text-xs text-gray-500"><span class="font-mono text-[9px] uppercase text-gray-400">Due</span><span class="${isUrgent ? 'text-red-600 font-medium' : ''}">${new Date(task.Deadline).toLocaleDateString()}</span></div>
-                                <div class="flex items-center gap-2 text-xs text-gray-500"><span class="font-mono text-[9px] uppercase text-gray-400">Req</span><span>${task.Requested_By ? task.Requested_By.split(' ')[0] : 'N/A'}</span></div>
+                                <div class="flex items-center gap-2 text-xs text-gray-500">
+                                    <span class="font-mono text-[9px] uppercase text-gray-400">Due</span>
+                                    <span class="${isUrgent ? 'text-red-600 font-medium' : ''}">${deadline}</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-gray-500">
+                                    <span class="font-mono text-[9px] uppercase text-gray-400">Req</span>
+                                    <span>${requesterDisplay}</span>
+                                </div>
                             </div>
                         </div>
                     </div>`;
@@ -282,7 +302,6 @@
             });
             lucide.createIcons();
         }
-
         function selectExecutive(exec) {
             renderFeed(exec.Executive_ID);
             showDetails(true);
@@ -295,17 +314,28 @@
 
         function selectTask(task, owner) {
             showDetails(true);
-            updateDetailPanel(task.Task_ID, task.Description, owner.Image_Initials, task.Status);
+            updateDetailPanel(
+                task.Task_ID || 'N/A', 
+                task.Description || 'No description', 
+                owner.Image_Initials, 
+                task.Status || 'unknown'
+            );
+            
             document.getElementById('detail-deadline').parentElement.classList.remove('hidden');
-            document.getElementById('detail-deadline').textContent = new Date(task.Deadline).toLocaleDateString();
+            const deadline = task.Deadline ? new Date(task.Deadline).toLocaleDateString() : 'No deadline';
+            document.getElementById('detail-deadline').textContent = deadline;
+            
             document.getElementById('detail-requester').parentElement.classList.remove('hidden');
-            document.getElementById('detail-requester').textContent = task.Requested_By;
+            document.getElementById('detail-requester').textContent = task.Requested_By || 'N/A';
             
             const blockerBox = document.getElementById('detail-blocker-box');
-            if (task.Blockers && task.Blockers !== 'None') {
+            if (task.Blockers && String(task.Blockers) !== 'None' && task.Blockers !== '') {
                 blockerBox.classList.remove('hidden');
                 document.getElementById('detail-blocker').textContent = task.Blockers;
-            } else { blockerBox.classList.add('hidden'); }
+            } else { 
+                blockerBox.classList.add('hidden'); 
+            }
+            
             renderHistoryLog(db.history.filter(h => h.Task_ID == task.Task_ID));
         }
 
@@ -349,5 +379,6 @@
     </script>
 </body>
 </html>
+
 
 
