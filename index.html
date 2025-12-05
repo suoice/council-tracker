@@ -114,7 +114,7 @@
             <div class="p-8 border-b border-corp-border bg-white">
                 <div class="flex justify-between items-start mb-4">
                     <!-- Avatar Container -->
-                    <div id="detail-avatar" class="w-10 h-10 rounded-sm bg-gray-50 border border-corp-border text-brand-green flex items-center justify-center font-mono text-xs font-bold overflow-hidden">--</div>
+                    <div id="detail-avatar" class="relative w-10 h-10 rounded-sm bg-gray-50 border border-corp-border text-brand-green flex items-center justify-center font-mono text-xs font-bold overflow-hidden">--</div>
                     <span id="detail-badge" class="px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider border border-gray-200 text-gray-500">--</span>
                 </div>
                 <h2 id="detail-title" class="text-xl font-semibold text-black mb-1 leading-tight">--</h2>
@@ -139,7 +139,7 @@
 
     <script>
         // *** CRITICAL: PASTE YOUR REAL URL HERE ***
-        const API_URL = 'https://script.google.com/macros/s/AKfycbyPEPSf6X3ZCp5YSz7qesewTvRYWSNixLqbCBIjax5up6lgloBqerCZPN6NTMNja_316g/exec'; 
+        const API_URL = 'PASTE_YOUR_URL_HERE'; 
 
         let db = { executives: [], tasks: [], history: [] };
 
@@ -228,25 +228,27 @@
             });
 
             sortedExecs.forEach(exec => {
-                // Safeguard against missing Executive_IDs
                 if (!exec.Executive_ID) return;
 
                 const taskCount = db.tasks.filter(t => t.Current_Owner_ID == exec.Executive_ID).length;
                 const hasUrgent = db.tasks.some(t => t.Current_Owner_ID == exec.Executive_ID && (safeLower(t.Status) === 'urgent' || safeLower(t.Status) === 'overdue'));
                 const borderColor = hasUrgent ? 'border-red-400' : 'border-gray-200';
                 
-                // Safe name splitting
                 const firstName = exec.Name ? exec.Name.split(' ')[0] : 'Unknown';
                 const initials = exec.Image_Initials || '??';
-                const imgUrl = exec.Image_URL || '';
+                
+                // NEW: Local File Path
+                const imgUrl = `images/${exec.Executive_ID}.jpg`;
 
                 const el = document.createElement('button');
                 el.className = 'flex flex-col items-center gap-2 group min-w-[72px]';
                 el.onclick = () => selectExecutive(exec);
                 
-                const avatarHTML = imgUrl 
-                    ? `<img src="${imgUrl}" class="w-full h-full object-cover rounded-sm" alt="${initials}">`
-                    : `<span class="text-sm font-semibold tracking-tight text-gray-700">${initials}</span>`;
+                // FALLBACK AVATAR LOGIC: Text behind Image. If image fails (not uploaded), it hides, showing text.
+                const avatarHTML = `
+                    <span class="absolute inset-0 flex items-center justify-center text-sm font-semibold tracking-tight text-gray-700">${initials}</span>
+                    <img src="${imgUrl}" class="relative w-full h-full object-cover rounded-sm z-10 bg-white" alt="${initials}" onerror="this.style.display='none'">
+                `;
 
                 el.innerHTML = `
                     <div class="relative w-14 h-14 rounded-sm bg-white border ${borderColor} flex items-center justify-center transition-all group-hover:border-brand-green group-hover:-translate-y-1 overflow-hidden">
@@ -287,7 +289,9 @@
             filtered.forEach(task => {
                 const owner = db.executives.find(e => e.Executive_ID == task.Current_Owner_ID) || { Name: 'Unknown', Image_Initials: '??' };
                 const isUrgent = safeLower(task.Status) !== 'normal';
-                const imgUrl = owner.Image_URL || '';
+                
+                // NEW: Local File Path
+                const imgUrl = `images/${owner.Executive_ID}.jpg`;
                 
                 const el = document.createElement('div');
                 el.className = 'group p-6 hover:bg-gray-50 transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-brand-green';
@@ -296,15 +300,16 @@
                 const displayReq = getRequesterName(safeStr(task.Requested_By));
                 const displayStatus = safeStr(task.Status).toUpperCase() || 'UNKNOWN';
                 
-                const avatarHTML = imgUrl 
-                    ? `<img src="${imgUrl}" class="w-full h-full object-cover rounded-sm" alt="${owner.Image_Initials}">`
-                    : owner.Image_Initials;
+                const avatarHTML = `
+                    <span class="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-600">${owner.Image_Initials}</span>
+                    <img src="${imgUrl}" class="relative z-10 w-full h-full object-cover rounded-sm bg-gray-50" alt="${owner.Image_Initials}" onerror="this.style.display='none'">
+                `;
 
                 el.innerHTML = `
                     <div class="flex items-start gap-5">
                         <div class="shrink-0 mt-1">
                              <span class="text-[10px] font-mono text-gray-400 block mb-1">OWNER</span>
-                            <div class="w-8 h-8 rounded-sm bg-gray-50 flex items-center justify-center text-xs font-bold text-gray-600 border border-gray-200 overflow-hidden">
+                            <div class="relative w-8 h-8 rounded-sm bg-gray-50 flex items-center justify-center text-xs font-bold text-gray-600 border border-gray-200 overflow-hidden">
                                 ${avatarHTML}
                             </div>
                         </div>
@@ -330,7 +335,7 @@
         function selectExecutive(exec) {
             renderFeed(exec.Executive_ID);
             showDetails(true);
-            updateDetailPanel(safeStr(exec.Name), safeStr(exec.Position), safeStr(exec.Image_Initials), safeStr(exec.Committee), exec.Image_URL);
+            updateDetailPanel(safeStr(exec.Name), safeStr(exec.Position), safeStr(exec.Image_Initials), safeStr(exec.Committee), exec.Executive_ID);
             document.getElementById('detail-deadline').parentElement.classList.add('hidden');
             document.getElementById('detail-requester').parentElement.classList.add('hidden');
             document.getElementById('detail-blocker-box').classList.add('hidden');
@@ -339,7 +344,7 @@
 
         function selectTask(task, owner) {
             showDetails(true);
-            updateDetailPanel(safeStr(task.Task_ID), safeStr(task.Description), safeStr(owner.Image_Initials), safeStr(task.Status), owner.Image_URL);
+            updateDetailPanel(safeStr(task.Task_ID), safeStr(task.Description), safeStr(owner.Image_Initials), safeStr(task.Status), owner.Executive_ID);
             document.getElementById('detail-deadline').parentElement.classList.remove('hidden');
             document.getElementById('detail-deadline').textContent = safeDate(task.Deadline);
             document.getElementById('detail-requester').parentElement.classList.remove('hidden');
@@ -355,16 +360,18 @@
             renderHistoryLog(db.history.filter(h => h.Task_ID == task.Task_ID));
         }
 
-        function updateDetailPanel(title, subtitle, avatar, badge, imgUrl) {
+        function updateDetailPanel(title, subtitle, avatar, badge, execId) {
             document.getElementById('detail-title').textContent = title;
             document.getElementById('detail-subtitle').textContent = subtitle;
             
+            // NEW: Local File Path for Details Panel
+            const imgUrl = `images/${execId}.jpg`;
             const avatarEl = document.getElementById('detail-avatar');
-            if (imgUrl) {
-                avatarEl.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
-            } else {
-                avatarEl.innerHTML = avatar;
-            }
+            
+            avatarEl.innerHTML = `
+                <span class="absolute inset-0 flex items-center justify-center">${avatar}</span>
+                <img src="${imgUrl}" class="relative z-10 w-full h-full object-cover bg-gray-50" onerror="this.style.display='none'">
+            `;
             
             document.getElementById('detail-badge').textContent = badge;
         }
@@ -402,4 +409,3 @@
     </script>
 </body>
 </html>
-
