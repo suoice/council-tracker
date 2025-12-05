@@ -25,9 +25,9 @@
 
     <style>
         body { background-color: #ffffff; color: #050505; }
-        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background-color: #d4d4d4; }
+        ::-webkit-scrollbar-thumb { background-color: #d4d4d4; border-radius: 4px; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .sidebar-sticky { position: sticky; top: 0; height: 100vh; }
         ::selection { background-color: #00c16a; color: white; }
@@ -62,9 +62,8 @@
 
         <!-- DEBUG ALERT BOX (Hidden by default) -->
         <div id="error-banner" class="hidden m-6 p-4 bg-red-50 border border-red-200 rounded-sm">
-            <h3 class="text-red-800 font-bold flex items-center gap-2"><i data-lucide="alert-octagon" class="w-4 h-4"></i> Connection Error</h3>
+            <h3 class="text-red-800 font-bold flex items-center gap-2"><i data-lucide="alert-octagon" class="w-4 h-4"></i> Data Error</h3>
             <p id="error-message" class="text-sm text-red-600 mt-1 font-mono"></p>
-            <p class="text-xs text-red-400 mt-2">See console (F12) for raw response.</p>
         </div>
 
         <!-- STATS -->
@@ -76,12 +75,12 @@
         </div>
 
         <!-- EXECUTIVES -->
-        <div class="px-8 py-8 border-b border-corp-border overflow-x-auto no-scrollbar">
+        <div class="px-8 py-8 border-b border-corp-border overflow-x-auto">
             <div class="flex justify-between items-end mb-6">
                 <h2 class="text-sm font-semibold uppercase tracking-wider">Board Members</h2>
                 <span class="text-[10px] font-mono bg-corp-surface border border-corp-border px-2 py-0.5 text-gray-500" id="exec-count">0</span>
             </div>
-            <div class="flex gap-6 min-w-max" id="executives-list"></div>
+            <div class="flex gap-6 min-w-max pb-2" id="executives-list"></div>
         </div>
 
         <!-- SEARCH -->
@@ -138,9 +137,8 @@
     </aside>
 
     <script>
-        // *** CRITICAL: REPLACE THIS WITH YOUR OWN URL ***
-        // If it looks like '...AKfycby...', you haven't updated it!
-        const API_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLgjHI2u7ZT9BA_OvQUusEebuWlmb6KU_QJVv0tTISOPZFhtK3cjdaDiC29GdKAjHjwrJqfSKyL_R-fH1xphfcjaubtLdlWxDFBKe9SzaMtVqqN9eW82yygeKQ87FZ_-ReMJBXb_bs2Djq9Xjr2CHOX2OqKPm7WagYk6bMvUlVzirKmrrAO9A2-9oRRHEbI7TA6xdroBxHHfKJj_0uqtafMw45e2_m9zGn8jHshh_PH6rPUoBef4IvPB0R5mx7EobRKkrXpboNNV3bk1OgC1OSUwspH71POwo-tOQUnF&lib=MHsoBAZyNB7sK5EVzswdPvUBJQk5mPd25'; 
+        // *** CRITICAL: PASTE YOUR REAL URL HERE ***
+        const API_URL = 'PASTE_YOUR_URL_HERE'; 
 
         let db = { executives: [], tasks: [], history: [] };
 
@@ -155,36 +153,24 @@
             const errorMsg = document.getElementById('error-message');
             
             try {
-                // 1. Check if user forgot to replace the URL
-                if (API_URL.includes('AKfycby')) {
-                    throw new Error("PLACEHOLDER DETECTED: You must replace the API_URL in line 118 with your own Google Web App URL.");
+                if (API_URL.includes('PASTE_YOUR_URL_HERE') || API_URL === '') {
+                    throw new Error("MISSING URL: You need to paste your Google Web App URL into line 118 of the code.");
                 }
 
-                // 2. Fetch Data
                 const res = await fetch(API_URL);
-                
-                // 3. Check for HTML response (Login page or Error Page)
                 const text = await res.text();
                 
                 if (text.trim().startsWith('<')) {
-                    console.error("Server Response:", text); // Log raw HTML to console for debugging
-                    if (text.includes("Google Drive") || text.includes("Meet")) {
-                        throw new Error("PERMISSION DENIED: Deployment access is set to 'Anyone with Google Account'. You must set it to 'Anyone' (Anonymous).");
-                    } else if (text.includes("ScriptError")) {
-                        throw new Error("SCRIPT CRASH: The Google Script failed. Did you rename your Sheet Tabs? They must match the code exactly.");
-                    } else {
-                        throw new Error("INVALID RESPONSE: Received HTML instead of JSON. Check your permissions and deployment version.");
-                    }
+                    console.error("Server Response:", text);
+                    throw new Error("INVALID RESPONSE: Received HTML instead of JSON. Check your permissions (Must be 'Anyone') and deployment version.");
                 }
 
-                // 4. Parse JSON
                 try {
                     db = JSON.parse(text);
                 } catch (e) {
                     throw new Error("JSON PARSE ERROR: The data returned was not valid JSON.");
                 }
 
-                // Success
                 statusEl.innerHTML = '<div class="w-2 h-2 rounded-full bg-brand-green"></div> Online';
                 renderStats();
                 renderExecutives();
@@ -195,36 +181,73 @@
                 statusEl.innerHTML = '<div class="w-2 h-2 rounded-full bg-red-500"></div> Error';
                 errorBanner.classList.remove('hidden');
                 errorMsg.innerText = e.message;
-                document.getElementById('feed-container').innerHTML = `<div class="p-12 text-center text-sm text-red-400 font-mono">CONNECTION FAILED</div>`;
+                document.getElementById('feed-container').innerHTML = `<div class="p-12 text-center text-sm text-red-400 font-mono">CONNECTION FAILED: ${e.message}</div>`;
             }
         }
 
+        // --- SAFE RENDERING HELPERS (PREVENTS CRASHES) ---
+        const safeLower = (str) => (str ? str.toString().toLowerCase() : '');
+        const safeStr = (str) => (str ? str.toString() : '');
+        const safeDate = (dateStr) => {
+            if (!dateStr) return 'N/A';
+            const d = new Date(dateStr);
+            return isNaN(d.getTime()) ? 'Invalid Date' : d.toLocaleDateString();
+        };
+
+        // Resolve ID to Name for "Requested By"
+        const getRequesterName = (reqVal) => {
+            if (!reqVal) return 'N/A';
+            const match = db.executives.find(e => e.Executive_ID == reqVal);
+            return match ? match.Name : reqVal;
+        };
+
         function renderStats() {
             document.getElementById('stat-active').textContent = db.tasks.length;
-            document.getElementById('stat-overdue').textContent = db.tasks.filter(t => t.Status?.toLowerCase() === 'overdue').length;
-            document.getElementById('stat-urgent').textContent = db.tasks.filter(t => t.Status?.toLowerCase() === 'urgent').length;
-            document.getElementById('stat-normal').textContent = db.tasks.filter(t => t.Status?.toLowerCase() === 'normal').length;
+            document.getElementById('stat-overdue').textContent = db.tasks.filter(t => safeLower(t.Status) === 'overdue').length;
+            document.getElementById('stat-urgent').textContent = db.tasks.filter(t => safeLower(t.Status) === 'urgent').length;
+            document.getElementById('stat-normal').textContent = db.tasks.filter(t => safeLower(t.Status) === 'normal').length;
             document.getElementById('exec-count').textContent = db.executives.length;
         }
 
         function renderExecutives() {
             const container = document.getElementById('executives-list');
             container.innerHTML = '';
-            db.executives.forEach(exec => {
+            
+            // SORTING LOGIC: Active tasks first, then by ID
+            const sortedExecs = [...db.executives].sort((a, b) => {
+                const countA = db.tasks.filter(t => t.Current_Owner_ID == a.Executive_ID).length;
+                const countB = db.tasks.filter(t => t.Current_Owner_ID == b.Executive_ID).length;
+                
+                // If one has tasks and the other doesn't, active ones go to left (top of sort)
+                if (countA > 0 && countB === 0) return -1;
+                if (countA === 0 && countB > 0) return 1;
+                
+                // Otherwise keep original order (by ID)
+                return a.Executive_ID - b.Executive_ID;
+            });
+
+            sortedExecs.forEach(exec => {
+                // Safeguard against missing Executive_IDs
+                if (!exec.Executive_ID) return;
+
                 const taskCount = db.tasks.filter(t => t.Current_Owner_ID == exec.Executive_ID).length;
-                const hasUrgent = db.tasks.some(t => t.Current_Owner_ID == exec.Executive_ID && (t.Status === 'urgent' || t.Status === 'overdue'));
+                const hasUrgent = db.tasks.some(t => t.Current_Owner_ID == exec.Executive_ID && (safeLower(t.Status) === 'urgent' || safeLower(t.Status) === 'overdue'));
                 const borderColor = hasUrgent ? 'border-red-400' : 'border-gray-200';
                 
+                // Safe name splitting
+                const firstName = exec.Name ? exec.Name.split(' ')[0] : 'Unknown';
+                const initials = exec.Image_Initials || '??';
+
                 const el = document.createElement('button');
                 el.className = 'flex flex-col items-center gap-2 group min-w-[72px]';
                 el.onclick = () => selectExecutive(exec);
                 el.innerHTML = `
                     <div class="relative w-14 h-14 rounded-sm bg-white border ${borderColor} flex items-center justify-center transition-all group-hover:border-brand-green group-hover:-translate-y-1">
-                        <span class="text-sm font-semibold tracking-tight text-gray-700">${exec.Image_Initials}</span>
+                        <span class="text-sm font-semibold tracking-tight text-gray-700">${initials}</span>
                         ${taskCount > 0 ? `<div class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-brand-green text-white text-[9px] font-mono flex items-center justify-center rounded-sm">${taskCount}</div>` : ''}
                     </div>
                     <div class="flex flex-col items-center">
-                        <span class="text-xs font-medium text-gray-900 group-hover:text-brand-green transition-colors">${exec.Name.split(' ')[0]}</span>
+                        <span class="text-xs font-medium text-gray-900 group-hover:text-brand-green transition-colors">${firstName}</span>
                     </div>`;
                 container.appendChild(el);
             });
@@ -234,44 +257,41 @@
             const container = document.getElementById('feed-container');
             container.innerHTML = '';
             let filtered = db.tasks;
+            
             if (filterExecId) filtered = filtered.filter(t => t.Current_Owner_ID == filterExecId);
             
-            const search = document.getElementById('searchInput').value.toLowerCase();
+            const search = safeLower(document.getElementById('searchInput').value);
             const statusFilter = document.getElementById('filterStatus').value;
-        
+
             filtered = filtered.filter(t => {
-                const desc = t.Description ? String(t.Description).toLowerCase() : '';
-                const taskId = t.Task_ID ? String(t.Task_ID).toLowerCase() : '';
-                const matchesSearch = desc.includes(search) || taskId.includes(search);
-                const matchesStatus = statusFilter === 'all' || (t.Status && String(t.Status).toLowerCase() === statusFilter);
+                // Defensive checks for missing fields
+                const desc = safeLower(t.Description);
+                const tid = safeLower(t.Task_ID);
+                const status = safeLower(t.Status);
+                
+                const matchesSearch = desc.includes(search) || tid.includes(search);
+                const matchesStatus = statusFilter === 'all' || status === statusFilter;
                 return matchesSearch && matchesStatus;
             });
-        
+
             if (filtered.length === 0) {
                 container.innerHTML = `<div class="p-12 text-center text-sm text-gray-400 font-mono">NO RECORDS FOUND</div>`;
                 return;
             }
-        
+
             filtered.forEach(task => {
                 const owner = db.executives.find(e => e.Executive_ID == task.Current_Owner_ID) || { Name: 'Unknown', Image_Initials: '??' };
-                const isUrgent = task.Status && String(task.Status).toLowerCase() !== 'normal';
-                
-                // Safe handling of all task properties
-                const taskId = task.Task_ID || 'N/A';
-                const description = task.Description || 'No description';
-                const status = task.Status || 'unknown';
-                const deadline = task.Deadline ? new Date(task.Deadline).toLocaleDateString() : 'No deadline';
-                
-                // Safe handling of Requested_By with proper string check
-                let requesterDisplay = 'N/A';
-                if (task.Requested_By) {
-                    const reqBy = String(task.Requested_By);
-                    requesterDisplay = reqBy.includes(' ') ? reqBy.split(' ')[0] : reqBy;
-                }
+                const isUrgent = safeLower(task.Status) !== 'normal';
                 
                 const el = document.createElement('div');
                 el.className = 'group p-6 hover:bg-gray-50 transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-brand-green';
                 el.onclick = () => selectTask(task, owner);
+                
+                // Resolve Requester Name
+                const rawReq = safeStr(task.Requested_By);
+                const displayReq = getRequesterName(rawReq);
+                const displayStatus = safeStr(task.Status).toUpperCase() || 'UNKNOWN';
+
                 el.innerHTML = `
                     <div class="flex items-start gap-5">
                         <div class="shrink-0 mt-1">
@@ -281,20 +301,14 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex justify-between items-start mb-1">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-xs font-mono text-brand-green opacity-80">#${taskId}</span>
-                                    <h3 class="text-sm font-bold text-gray-900 truncate">${description}</h3>
+                                    <span class="text-xs font-mono text-brand-green opacity-80">#${safeStr(task.Task_ID)}</span>
+                                    <h3 class="text-sm font-bold text-gray-900 truncate">${safeStr(task.Description)}</h3>
                                 </div>
-                                <span class="ml-2 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-sm ${getStatusClasses(status)}">${status}</span>
+                                <span class="ml-2 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-sm ${getStatusClasses(task.Status)}">${displayStatus}</span>
                             </div>
                             <div class="flex items-center gap-6 mt-3">
-                                <div class="flex items-center gap-2 text-xs text-gray-500">
-                                    <span class="font-mono text-[9px] uppercase text-gray-400">Due</span>
-                                    <span class="${isUrgent ? 'text-red-600 font-medium' : ''}">${deadline}</span>
-                                </div>
-                                <div class="flex items-center gap-2 text-xs text-gray-500">
-                                    <span class="font-mono text-[9px] uppercase text-gray-400">Req</span>
-                                    <span>${requesterDisplay}</span>
-                                </div>
+                                <div class="flex items-center gap-2 text-xs text-gray-500"><span class="font-mono text-[9px] uppercase text-gray-400">Due</span><span class="${isUrgent ? 'text-red-600 font-medium' : ''}">${safeDate(task.Deadline)}</span></div>
+                                <div class="flex items-center gap-2 text-xs text-gray-500"><span class="font-mono text-[9px] uppercase text-gray-400">Req</span><span>${displayReq}</span></div>
                             </div>
                         </div>
                     </div>`;
@@ -302,10 +316,11 @@
             });
             lucide.createIcons();
         }
+
         function selectExecutive(exec) {
             renderFeed(exec.Executive_ID);
             showDetails(true);
-            updateDetailPanel(exec.Name, exec.Position, exec.Image_Initials, exec.Committee);
+            updateDetailPanel(safeStr(exec.Name), safeStr(exec.Position), safeStr(exec.Image_Initials), safeStr(exec.Committee));
             document.getElementById('detail-deadline').parentElement.classList.add('hidden');
             document.getElementById('detail-requester').parentElement.classList.add('hidden');
             document.getElementById('detail-blocker-box').classList.add('hidden');
@@ -314,28 +329,20 @@
 
         function selectTask(task, owner) {
             showDetails(true);
-            updateDetailPanel(
-                task.Task_ID || 'N/A', 
-                task.Description || 'No description', 
-                owner.Image_Initials, 
-                task.Status || 'unknown'
-            );
-            
+            updateDetailPanel(safeStr(task.Task_ID), safeStr(task.Description), safeStr(owner.Image_Initials), safeStr(task.Status));
             document.getElementById('detail-deadline').parentElement.classList.remove('hidden');
-            const deadline = task.Deadline ? new Date(task.Deadline).toLocaleDateString() : 'No deadline';
-            document.getElementById('detail-deadline').textContent = deadline;
-            
+            document.getElementById('detail-deadline').textContent = safeDate(task.Deadline);
             document.getElementById('detail-requester').parentElement.classList.remove('hidden');
-            document.getElementById('detail-requester').textContent = task.Requested_By || 'N/A';
+            
+            // Resolve Name for Details Panel
+            const rawReq = safeStr(task.Requested_By);
+            document.getElementById('detail-requester').textContent = getRequesterName(rawReq);
             
             const blockerBox = document.getElementById('detail-blocker-box');
-            if (task.Blockers && String(task.Blockers) !== 'None' && task.Blockers !== '') {
+            if (task.Blockers && task.Blockers !== 'None' && task.Blockers !== '') {
                 blockerBox.classList.remove('hidden');
                 document.getElementById('detail-blocker').textContent = task.Blockers;
-            } else { 
-                blockerBox.classList.add('hidden'); 
-            }
-            
+            } else { blockerBox.classList.add('hidden'); }
             renderHistoryLog(db.history.filter(h => h.Task_ID == task.Task_ID));
         }
 
@@ -354,7 +361,7 @@
                 const isLast = idx === historyItems.length - 1;
                 const el = document.createElement('div');
                 el.className = 'flex gap-4 pb-8 relative';
-                el.innerHTML = `${!isLast ? '<div class="absolute left-[5px] top-2 bottom-0 w-[1px] bg-gray-200"></div>' : ''}<div class="w-2.5 h-2.5 rounded-sm bg-brand-green shrink-0 mt-1.5 relative z-10"></div><div><div class="flex items-center gap-2 mb-1"><span class="text-[10px] font-mono text-gray-400">${new Date(h.Date).toLocaleDateString()}</span></div><p class="text-sm font-semibold text-gray-900 leading-tight">${h.Action}</p>${h.Notes ? `<p class="text-xs text-gray-500 mt-2 font-mono bg-gray-50 p-2 border border-gray-100 rounded-sm">${h.Notes}</p>` : ''}</div>`;
+                el.innerHTML = `${!isLast ? '<div class="absolute left-[5px] top-2 bottom-0 w-[1px] bg-gray-200"></div>' : ''}<div class="w-2.5 h-2.5 rounded-sm bg-brand-green shrink-0 mt-1.5 relative z-10"></div><div><div class="flex items-center gap-2 mb-1"><span class="text-[10px] font-mono text-gray-400">${safeDate(h.Date)}</span></div><p class="text-sm font-semibold text-gray-900 leading-tight">${safeStr(h.Action)}</p>${h.Notes ? `<p class="text-xs text-gray-500 mt-2 font-mono bg-gray-50 p-2 border border-gray-100 rounded-sm">${safeStr(h.Notes)}</p>` : ''}</div>`;
                 list.appendChild(el);
             });
         }
@@ -379,6 +386,3 @@
     </script>
 </body>
 </html>
-
-
-
