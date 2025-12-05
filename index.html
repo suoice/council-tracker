@@ -3,34 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Council Nexus</title>
+    <title>Council Nexus | Enterprise Green</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
-    <!-- Fonts: Plus Jakarta Sans (Modern, Geometric) -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['"Space Mono"', 'monospace'],
                     },
                     colors: {
                         brand: {
-                            black: '#0f1419', // X/Twitter Black
-                            gray: '#536471',
-                            light: '#eff3f4',
-                            accent: '#1d9bf0', // Staple Blue
-                            success: '#00ba7c',
-                            danger: '#f91880',
-                            warn: '#ffd400'
+                            green: '#00c16a', // The "Pop" Color (Signal Green)
+                            dark: '#050505',   // High contrast black
+                        },
+                        corp: {
+                            base: '#ffffff',
+                            surface: '#fafafa',
+                            border: '#e5e5e5', 
+                            subtle: '#737373', 
                         }
+                    },
+                    boxShadow: {
+                        'none': 'none',
                     }
                 }
             }
@@ -38,194 +42,176 @@
     </script>
 
     <style>
-        body { background-color: #ffffff; }
+        body { background-color: #ffffff; color: #050505; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: #d4d4d4; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
         .sidebar-sticky { position: sticky; top: 0; height: 100vh; }
         
-        /* Smooth Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background-color: #e5e7eb; border-radius: 20px; }
-
-        /* Instagram-style Ring Animation */
-        @keyframes pulse-ring {
-            0% { box-shadow: 0 0 0 0 rgba(29, 155, 240, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(29, 155, 240, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(29, 155, 240, 0); }
-        }
-        .animate-ring { animation: pulse-ring 2s infinite; }
+        /* Subtle selection color matching the brand */
+        ::selection { background-color: #00c16a; color: white; }
     </style>
 </head>
-<body class="text-brand-black overflow-x-hidden">
+<body class="antialiased overflow-x-hidden">
 
     <div class="flex min-h-screen">
 
-        <!-- 1. LEFT SIDEBAR (Desktop) -->
-        <aside class="hidden lg:flex flex-col w-[275px] border-r border-gray-100 px-4 py-6 sidebar-sticky bg-white z-50">
-            <!-- Logo -->
-            <div class="px-4 mb-8">
-                <div class="w-10 h-10 bg-brand-black text-white rounded-xl flex items-center justify-center text-xl font-bold mb-2">
-                    CN
+        <aside class="hidden lg:flex flex-col w-[260px] bg-brand-dark text-white sidebar-sticky z-50">
+            <div class="px-6 py-8 border-b border-white/10">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-brand-green text-white flex items-center justify-center font-mono font-bold text-sm tracking-tighter rounded-sm shadow-[0_0_15px_rgba(0,193,106,0.3)]">
+                        CN
+                    </div>
+                    <div>
+                        <h1 class="font-sans font-semibold tracking-wide text-sm uppercase">Council Nexus</h1>
+                        <p class="font-mono text-[10px] text-gray-500">SYS.2.1</p>
+                    </div>
                 </div>
-                <h1 class="text-xl font-bold tracking-tight">Council Nexus</h1>
-                <p class="text-xs text-brand-gray font-medium">Task OS v2.1</p>
             </div>
 
-            <!-- Navigation -->
-            <nav class="flex-1 space-y-1">
-                <a href="#" class="flex items-center gap-4 px-4 py-3 text-lg font-bold bg-brand-light rounded-full transition-colors">
-                    <i data-lucide="layout-grid" class="w-6 h-6"></i> Dashboard
+            <nav class="flex-1 py-6 px-4 space-y-1">
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-white border-l-2 border-brand-green bg-white/5 transition-all">
+                    <i data-lucide="layout-grid" class="w-4 h-4 text-brand-green"></i> 
+                    <span>Overview</span>
                 </a>
-                <a href="#" class="flex items-center gap-4 px-4 py-3 text-lg font-medium text-brand-gray hover:bg-gray-50 hover:text-brand-black rounded-full transition-colors">
-                    <i data-lucide="users" class="w-6 h-6"></i> Executives
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent transition-all">
+                    <i data-lucide="users" class="w-4 h-4 opacity-70"></i> 
+                    <span>Board Members</span>
                 </a>
-                <a href="#" class="flex items-center gap-4 px-4 py-3 text-lg font-medium text-brand-gray hover:bg-gray-50 hover:text-brand-black rounded-full transition-colors">
-                    <i data-lucide="file-text" class="w-6 h-6"></i> History Log
+                <a href="#" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 border-l-2 border-transparent transition-all">
+                    <i data-lucide="file-text" class="w-4 h-4 opacity-70"></i> 
+                    <span>Audit Log</span>
                 </a>
             </nav>
 
-            <!-- User Profile Snippet -->
-            <div class="mt-auto px-4 py-4 border-t border-gray-100">
+            <div class="mt-auto px-6 py-6 border-t border-white/10">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center font-bold text-gray-500">
-                        GS
+                    <div class="w-8 h-8 rounded-sm bg-gray-800 flex items-center justify-center font-mono text-xs text-white relative">
+                        GV
+                        <div class="absolute -top-1 -right-1 w-2 h-2 bg-brand-green rounded-full border border-gray-800"></div>
                     </div>
-                    <div>
-                        <p class="text-sm font-bold">Guest Viewer</p>
-                        <p class="text-xs text-brand-gray">Read-Only Mode</p>
+                    <div class="overflow-hidden">
+                        <p class="text-sm font-medium truncate">Guest Viewer</p>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-wider">Read Only</p>
                     </div>
                 </div>
             </div>
         </aside>
 
-        <!-- 2. MAIN FEED (Center) -->
-        <main class="flex-1 max-w-4xl w-full border-r border-gray-100 min-h-screen">
+        <main class="flex-1 max-w-5xl w-full border-r border-corp-border min-h-screen bg-white">
             
-            <!-- Mobile Header -->
-            <header class="lg:hidden sticky top-0 bg-white/80 backdrop-blur-md border-b border-gray-100 p-4 z-40 flex justify-between items-center">
-                <div class="font-bold text-xl">Council Nexus</div>
-                <div class="w-8 h-8 bg-brand-black text-white rounded-full flex items-center justify-center font-bold text-sm">CN</div>
+            <header class="lg:hidden sticky top-0 bg-white border-b border-corp-border p-4 z-40 flex justify-between items-center">
+                <div class="font-bold text-lg uppercase tracking-tight">Council Nexus</div>
+                <div class="w-8 h-8 bg-brand-green text-white flex items-center justify-center font-bold text-xs rounded-sm">CN</div>
             </header>
 
-            <!-- Stats Row (Donezo Style) -->
-            <div class="p-6 grid grid-cols-2 md:grid-cols-4 gap-4 border-b border-gray-100 bg-white">
-                <div class="p-4 rounded-3xl bg-gray-50 border border-gray-100">
-                    <div class="flex items-center gap-2 mb-2 text-brand-gray">
-                        <i data-lucide="zap" class="w-4 h-4"></i>
-                        <span class="text-xs font-bold uppercase">Active</span>
-                    </div>
-                    <div class="text-3xl font-extrabold" id="stat-active">--</div>
+            <div class="grid grid-cols-2 md:grid-cols-4 border-b border-corp-border divide-x divide-corp-border bg-corp-surface">
+                <div class="p-6 hover:bg-white transition-colors">
+                    <div class="text-[10px] font-mono uppercase text-corp-subtle tracking-widest mb-2">Total Tasks</div>
+                    <div class="text-2xl font-sans font-semibold text-black" id="stat-active">--</div>
                 </div>
-                <div class="p-4 rounded-3xl bg-brand-danger/5 border border-brand-danger/10">
-                    <div class="flex items-center gap-2 mb-2 text-brand-danger">
-                        <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                        <span class="text-xs font-bold uppercase">Overdue</span>
-                    </div>
-                    <div class="text-3xl font-extrabold text-brand-danger" id="stat-overdue">--</div>
+                <div class="p-6 hover:bg-white transition-colors group">
+                    <div class="text-[10px] font-mono uppercase text-corp-subtle tracking-widest mb-2 group-hover:text-red-600 transition-colors">Overdue</div>
+                    <div class="text-2xl font-sans font-semibold text-black group-hover:text-red-600 transition-colors" id="stat-overdue">--</div>
                 </div>
-                <div class="p-4 rounded-3xl bg-brand-warn/10 border border-brand-warn/20">
-                    <div class="flex items-center gap-2 mb-2 text-yellow-700">
-                        <i data-lucide="clock" class="w-4 h-4"></i>
-                        <span class="text-xs font-bold uppercase">Urgent</span>
-                    </div>
-                    <div class="text-3xl font-extrabold text-yellow-700" id="stat-urgent">--</div>
+                <div class="p-6 hover:bg-white transition-colors group">
+                    <div class="text-[10px] font-mono uppercase text-corp-subtle tracking-widest mb-2 group-hover:text-amber-500 transition-colors">Urgent</div>
+                    <div class="text-2xl font-sans font-semibold text-black group-hover:text-amber-500 transition-colors" id="stat-urgent">--</div>
                 </div>
-                <div class="p-4 rounded-3xl bg-brand-success/5 border border-brand-success/10">
-                    <div class="flex items-center gap-2 mb-2 text-brand-success">
-                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
-                        <span class="text-xs font-bold uppercase">On Track</span>
-                    </div>
-                    <div class="text-3xl font-extrabold text-brand-success" id="stat-normal">--</div>
+                <div class="p-6 hover:bg-white transition-colors">
+                    <div class="text-[10px] font-mono uppercase text-corp-subtle tracking-widest mb-2 text-brand-green">On Track</div>
+                    <div class="text-2xl font-sans font-semibold text-brand-green" id="stat-normal">--</div>
                 </div>
             </div>
 
-            <!-- "Stories" Row (Executives) -->
-            <div class="px-6 py-6 border-b border-gray-100 overflow-x-auto no-scrollbar">
-                <h2 class="text-lg font-extrabold mb-4 flex items-center gap-2">
-                    Current Board
-                    <span class="text-xs font-normal text-brand-gray px-2 py-1 bg-gray-100 rounded-full" id="exec-count">0</span>
-                </h2>
+            <div class="px-8 py-8 border-b border-corp-border overflow-x-auto no-scrollbar">
+                <div class="flex justify-between items-end mb-6">
+                    <h2 class="text-sm font-semibold uppercase tracking-wider text-black">
+                        Board Members
+                    </h2>
+                    <span class="text-[10px] font-mono bg-corp-surface border border-corp-border px-2 py-0.5 text-gray-500" id="exec-count">0</span>
+                </div>
                 
-                <div class="flex gap-4 min-w-max" id="executives-list">
-                    <!-- Executives Injected Here -->
-                    <div class="animate-pulse flex gap-4">
-                        <div class="w-16 h-16 bg-gray-100 rounded-full"></div>
-                        <div class="w-16 h-16 bg-gray-100 rounded-full"></div>
-                        <div class="w-16 h-16 bg-gray-100 rounded-full"></div>
+                <div class="flex gap-6 min-w-max" id="executives-list">
                     </div>
-                </div>
             </div>
 
-            <!-- Search & Filter -->
-            <div class="sticky top-0 lg:static bg-white/90 backdrop-blur-sm z-30 px-6 py-3 border-b border-gray-100 flex gap-3 items-center">
+            <div class="sticky top-0 lg:static bg-white/95 backdrop-blur-sm z-30 px-8 py-4 border-b border-corp-border flex gap-4 items-center">
                 <div class="relative flex-1">
-                    <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"></i>
-                    <input type="text" id="searchInput" placeholder="Search tasks..." class="w-full bg-gray-100 rounded-full py-2 pl-10 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-accent/50">
+                    <i data-lucide="search" class="absolute left-0 top-2.5 w-4 h-4 text-gray-300"></i>
+                    <input type="text" id="searchInput" placeholder="Search database..." class="w-full bg-transparent border-b border-corp-border py-2 pl-8 pr-4 text-sm font-medium focus:outline-none focus:border-brand-green rounded-none placeholder:text-gray-300 placeholder:font-normal transition-colors">
                 </div>
-                <select id="filterStatus" class="bg-gray-100 rounded-full px-4 py-2 text-sm font-bold text-gray-600 focus:outline-none cursor-pointer">
-                    <option value="all">All</option>
-                    <option value="urgent">Urgent</option>
-                    <option value="overdue">Overdue</option>
+                <select id="filterStatus" class="bg-transparent border border-corp-border text-xs font-mono uppercase tracking-wide rounded-sm px-3 py-2 text-gray-600 focus:outline-none focus:border-brand-green cursor-pointer hover:bg-gray-50">
+                    <option value="all">View: All</option>
+                    <option value="urgent">View: Urgent</option>
+                    <option value="overdue">View: Overdue</option>
                 </select>
                 <div id="loader" class="hidden">
-                    <i data-lucide="loader-2" class="w-5 h-5 animate-spin text-brand-accent"></i>
+                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin text-brand-green"></i>
                 </div>
             </div>
 
-            <!-- Feed Content -->
-            <div class="bg-gray-50 min-h-screen">
+            <div class="bg-white min-h-screen pb-20">
                 <div id="feed-container" class="divide-y divide-gray-100">
-                    <!-- Tasks Injected Here -->
-                    <div class="p-12 text-center text-gray-400">
-                        Waiting for data connection...
+                    <div class="p-12 text-center text-xs font-mono text-gray-300 uppercase tracking-widest">
+                        Initializing Data Stream...
                     </div>
                 </div>
             </div>
         </main>
 
-        <!-- 3. RIGHT SIDEBAR (Details) - "What's Happening" Style -->
-        <aside class="hidden xl:block w-[350px] p-6 sidebar-sticky bg-white overflow-y-auto">
-            <div id="details-panel-empty" class="h-full flex flex-col items-center justify-center text-center text-gray-400">
-                <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-4">
-                    <i data-lucide="mouse-pointer-2" class="w-8 h-8 text-gray-300"></i>
+        <aside class="hidden xl:block w-[380px] sidebar-sticky bg-corp-surface border-l border-corp-border overflow-y-auto">
+            <div id="details-panel-empty" class="h-full flex flex-col items-center justify-center text-center text-gray-400 p-8">
+                <div class="w-12 h-12 border border-dashed border-gray-300 rounded-sm flex items-center justify-center mb-4">
+                    <i data-lucide="mouse-pointer-2" class="w-4 h-4 text-gray-300"></i>
                 </div>
-                <h3 class="font-bold text-gray-900">Select an item</h3>
-                <p class="text-sm mt-2 max-w-[200px]">Click on an executive or a task to view full history and details.</p>
+                <p class="text-sm font-medium text-gray-900">No Selection</p>
+                <p class="text-xs text-gray-500 mt-1">Select an item to view details.</p>
             </div>
 
-            <div id="details-panel-content" class="hidden space-y-6">
-                <!-- Header -->
-                <div class="flex items-start justify-between">
-                    <div class="flex items-center gap-3">
-                        <div id="detail-avatar" class="w-12 h-12 rounded-xl bg-brand-black text-white flex items-center justify-center text-lg font-bold">--</div>
-                        <div>
-                            <h2 id="detail-title" class="text-lg font-extrabold leading-tight">--</h2>
-                            <p id="detail-subtitle" class="text-sm text-brand-gray">--</p>
+            <div id="details-panel-content" class="hidden flex flex-col min-h-full">
+                <div class="p-8 border-b border-corp-border bg-white">
+                    <div class="flex justify-between items-start mb-4">
+                        <div id="detail-avatar" class="w-10 h-10 rounded-sm bg-gray-50 border border-corp-border text-brand-green flex items-center justify-center font-mono text-xs font-bold">--</div>
+                        <span id="detail-badge" class="px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider border border-gray-200 text-gray-500">--</span>
+                    </div>
+                    <h2 id="detail-title" class="text-xl font-semibold text-black mb-1 leading-tight">--</h2>
+                    <p id="detail-subtitle" class="text-sm text-corp-subtle">--</p>
+                </div>
+
+                <div class="p-8 space-y-6 flex-1">
+                    
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="group">
+                            <span class="block text-[10px] font-mono uppercase text-gray-400 mb-1">Deadline</span>
+                            <span id="detail-deadline" class="block text-sm font-medium text-black border-b border-transparent group-hover:border-brand-green transition-colors pb-0.5">--</span>
+                        </div>
+                        <div class="group">
+                            <span class="block text-[10px] font-mono uppercase text-gray-400 mb-1">Requested By</span>
+                            <span id="detail-requester" class="block text-sm font-medium text-black border-b border-transparent group-hover:border-brand-green transition-colors pb-0.5">--</span>
                         </div>
                     </div>
-                    <span id="detail-badge" class="px-2 py-1 text-xs font-bold bg-gray-100 rounded">--</span>
-                </div>
 
-                <!-- Context Card -->
-                <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100 space-y-3">
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-brand-gray">Deadline</span>
-                        <span id="detail-deadline" class="font-bold">--</span>
+                    <div id="detail-blocker-box" class="hidden p-4 bg-white border-l-2 border-red-500 shadow-sm flex gap-3 items-start">
+                        <i data-lucide="alert-triangle" class="w-4 h-4 text-red-600 mt-0.5 shrink-0"></i>
+                        <div>
+                            <p class="text-[10px] font-bold text-red-600 uppercase tracking-wide mb-1">Blocker</p>
+                            <p id="detail-blocker" class="text-xs text-gray-600 leading-relaxed">--</p>
+                        </div>
                     </div>
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-brand-gray">Requested By</span>
-                        <span id="detail-requester" class="font-medium">--</span>
-                    </div>
-                    <div id="detail-blocker-box" class="hidden mt-2 p-3 bg-red-50 text-red-700 text-xs rounded-xl border border-red-100 flex gap-2 items-start">
-                        <i data-lucide="alert-triangle" class="w-4 h-4 shrink-0"></i>
-                        <span id="detail-blocker">--</span>
-                    </div>
-                </div>
 
-                <!-- History Timeline -->
-                <div>
-                    <h3 class="font-bold text-sm uppercase tracking-wider text-gray-400 mb-4">Activity Log</h3>
-                    <div id="history-list" class="space-y-0 relative">
-                        <!-- History Items Injected -->
+                    <div class="pt-6 border-t border-gray-200">
+                        <h3 class="text-[10px] font-mono uppercase text-gray-400 mb-6 flex items-center gap-2">
+                            <i data-lucide="history" class="w-3 h-3 text-brand-green"></i> Activity Log
+                        </h3>
+                        <div id="history-list" class="space-y-0 relative pl-2">
+                            </div>
                     </div>
                 </div>
             </div>
@@ -233,7 +219,6 @@
 
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
     <script>
         // *** CONFIGURATION ***
         const API_URL = 'https://script.google.com/macros/s/AKfycbyPEPSf6X3ZCp5YSz7qesewTvRYWSNixLqbCBIjax5up6lgloBqerCZPN6NTMNja_316g/exec'; 
@@ -288,29 +273,31 @@
             container.innerHTML = '';
 
             db.executives.forEach(exec => {
-                // Count active tasks for this exec
                 const taskCount = db.tasks.filter(t => t.Current_Owner_ID == exec.Executive_ID).length;
                 const hasUrgent = db.tasks.some(t => t.Current_Owner_ID == exec.Executive_ID && (t.Status === 'urgent' || t.Status === 'overdue'));
                 
-                const ringColor = hasUrgent ? 'border-brand-danger' : (taskCount > 0 ? 'border-brand-accent' : 'border-gray-200');
-                const ringAnim = hasUrgent ? 'animate-ring' : '';
-
+                // If Urgent, show red dot. If active tasks, show green border on hover.
+                const borderColor = hasUrgent ? 'border-red-400' : 'border-gray-200';
+                
                 const el = document.createElement('button');
                 el.className = 'flex flex-col items-center gap-2 group min-w-[72px]';
                 el.onclick = () => selectExecutive(exec);
                 el.innerHTML = `
-                    <div class="relative w-16 h-16 rounded-full p-[2px] border-2 ${ringColor} ${ringAnim} bg-white transition-transform group-hover:scale-105">
-                        <div class="w-full h-full rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600 border border-white">
-                            ${exec.Image_Initials}
-                        </div>
+                    <div class="relative w-14 h-14 rounded-sm bg-white border ${borderColor} flex items-center justify-center transition-all group-hover:border-brand-green group-hover:-translate-y-1">
+                        <span class="text-sm font-semibold tracking-tight text-gray-700">${exec.Image_Initials}</span>
                         ${taskCount > 0 ? `
-                        <div class="absolute bottom-0 right-0 w-5 h-5 bg-brand-black text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">
+                        <div class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-brand-green text-white text-[9px] font-mono flex items-center justify-center rounded-sm">
                             ${taskCount}
                         </div>` : ''}
                     </div>
-                    <span class="text-[11px] font-medium text-gray-600 truncate w-full text-center group-hover:text-black">
-                        ${exec.Name.split(' ')[0]}
-                    </span>
+                    <div class="flex flex-col items-center">
+                        <span class="text-xs font-medium text-gray-900 group-hover:text-brand-green transition-colors">
+                            ${exec.Name.split(' ')[0]}
+                        </span>
+                        <span class="text-[9px] uppercase tracking-wide text-gray-400">
+                            ${hasUrgent ? 'Action' : 'Active'}
+                        </span>
+                    </div>
                 `;
                 container.appendChild(el);
             });
@@ -322,12 +309,10 @@
 
             let filtered = db.tasks;
             
-            // Filter by Executive Click
             if (filterExecId) {
                 filtered = filtered.filter(t => t.Current_Owner_ID == filterExecId);
             }
 
-            // Filter by Dropdown
             const search = document.getElementById('searchInput').value.toLowerCase();
             const statusFilter = document.getElementById('filterStatus').value;
 
@@ -338,7 +323,7 @@
             });
 
             if (filtered.length === 0) {
-                container.innerHTML = `<div class="p-10 text-center text-gray-400">No tasks found.</div>`;
+                container.innerHTML = `<div class="p-12 text-center text-sm text-gray-400 font-mono">NO RECORDS FOUND</div>`;
                 return;
             }
 
@@ -347,46 +332,43 @@
                 const isUrgent = task.Status.toLowerCase() !== 'normal';
                 
                 const el = document.createElement('div');
-                el.className = 'p-6 bg-white hover:bg-gray-50 transition-colors cursor-pointer group border-b border-gray-100';
+                // The Hover effect brings in the Green Border
+                el.className = 'group p-6 hover:bg-gray-50 transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-brand-green';
                 el.onclick = () => selectTask(task, owner);
                 
                 el.innerHTML = `
-                    <div class="flex gap-4">
-                        <div class="shrink-0">
-                            <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">
+                    <div class="flex items-start gap-5">
+                        <div class="shrink-0 mt-1">
+                             <span class="text-[10px] font-mono text-gray-400 block mb-1">OWNER</span>
+                            <div class="w-8 h-8 rounded-sm bg-gray-50 flex items-center justify-center text-xs font-bold text-gray-600 border border-gray-200">
                                 ${owner.Image_Initials}
                             </div>
                         </div>
-                        <div class="flex-1">
+                        
+                        <div class="flex-1 min-w-0">
                             <div class="flex justify-between items-start mb-1">
                                 <div class="flex items-center gap-2">
-                                    <span class="font-bold text-gray-900">${owner.Name}</span>
-                                    <span class="text-gray-500 text-sm">@${owner.Committee}</span>
-                                    <span class="text-gray-300 text-xs">•</span>
-                                    <span class="text-xs text-gray-400 font-mono">${task.Task_ID}</span>
+                                    <span class="text-xs font-mono text-brand-green opacity-80">#${task.Task_ID}</span>
+                                    <h3 class="text-sm font-bold text-gray-900 truncate">${task.Description}</h3>
                                 </div>
-                                <span class="text-xs font-bold px-2 py-1 rounded-full ${getStatusStyle(task.Status)}">
-                                    ${task.Status.toUpperCase()}
+                                <span class="ml-2 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-sm ${getStatusClasses(task.Status)}">
+                                    ${task.Status}
                                 </span>
                             </div>
-                            
-                            <p class="text-gray-900 text-[15px] leading-snug mb-3">
-                                ${task.Description}
-                            </p>
 
-                            <div class="flex items-center gap-4 text-xs text-gray-500">
-                                <div class="flex items-center gap-1 ${isUrgent ? 'text-brand-danger font-bold' : ''}">
-                                    <i data-lucide="calendar" class="w-3 h-3"></i>
-                                    ${new Date(task.Deadline).toLocaleDateString()}
+                            <div class="flex items-center gap-6 mt-3">
+                                <div class="flex items-center gap-2 text-xs text-gray-500">
+                                    <span class="font-mono text-[9px] uppercase text-gray-400">Due</span>
+                                    <span class="${isUrgent ? 'text-red-600 font-medium' : ''}">${new Date(task.Deadline).toLocaleDateString()}</span>
                                 </div>
-                                <div class="flex items-center gap-1">
-                                    <i data-lucide="user-circle" class="w-3 h-3"></i>
-                                    Req: ${task.Requested_By.split(' ')[0]}
+                                <div class="flex items-center gap-2 text-xs text-gray-500">
+                                    <span class="font-mono text-[9px] uppercase text-gray-400">Req</span>
+                                    <span>${task.Requested_By.split(' ')[0]}</span>
                                 </div>
                                 ${task.Blockers && task.Blockers !== 'None' ? `
-                                <div class="flex items-center gap-1 text-orange-600 font-medium">
-                                    <i data-lucide="alert-triangle" class="w-3 h-3"></i>
-                                    Blocked
+                                <div class="flex items-center gap-1 text-xs text-red-600 font-medium ml-auto">
+                                    <i data-lucide="alert-circle" class="w-3 h-3"></i>
+                                    BLOCKED
                                 </div>` : ''}
                             </div>
                         </div>
@@ -402,19 +384,16 @@
         function selectExecutive(exec) {
             renderFeed(exec.Executive_ID);
             
-            // Populate Right Panel with Executive Info
             showDetails(true);
             document.getElementById('detail-title').textContent = exec.Name;
             document.getElementById('detail-subtitle').textContent = exec.Position;
             document.getElementById('detail-avatar').textContent = exec.Image_Initials;
             document.getElementById('detail-badge').textContent = exec.Committee;
             
-            // Hide task-specific fields in context card for exec view
             document.getElementById('detail-deadline').parentElement.classList.add('hidden');
             document.getElementById('detail-requester').parentElement.classList.add('hidden');
             document.getElementById('detail-blocker-box').classList.add('hidden');
             
-            // Show recent history for this person
             const history = db.history.filter(h => h.Owner_ID == exec.Executive_ID);
             renderHistoryLog(history);
         }
@@ -426,7 +405,6 @@
             document.getElementById('detail-avatar').textContent = owner.Image_Initials;
             document.getElementById('detail-badge').textContent = task.Status;
             
-            // Show task specific fields
             document.getElementById('detail-deadline').parentElement.classList.remove('hidden');
             document.getElementById('detail-deadline').textContent = new Date(task.Deadline).toLocaleDateString();
             document.getElementById('detail-requester').parentElement.classList.remove('hidden');
@@ -440,7 +418,6 @@
                 blockerBox.classList.add('hidden');
             }
 
-            // Show history for this specific task
             const history = db.history.filter(h => h.Task_ID == task.Task_ID);
             renderHistoryLog(history);
         }
@@ -450,22 +427,23 @@
             list.innerHTML = '';
             
             if (historyItems.length === 0) {
-                list.innerHTML = '<div class="text-xs text-gray-400 italic">No history recorded.</div>';
+                list.innerHTML = '<div class="text-[10px] text-gray-300 font-mono uppercase tracking-widest pl-4">No Data Available</div>';
                 return;
             }
 
-            // Sort by date desc
             historyItems.sort((a,b) => new Date(b.Date) - new Date(a.Date)).forEach((h, idx) => {
                 const isLast = idx === historyItems.length - 1;
                 const el = document.createElement('div');
-                el.className = 'flex gap-3 pb-6 relative';
+                el.className = 'flex gap-4 pb-8 relative';
                 el.innerHTML = `
-                    ${!isLast ? '<div class="absolute left-[5px] top-2 bottom-0 w-[2px] bg-gray-100"></div>' : ''}
-                    <div class="w-3 h-3 rounded-full bg-brand-accent shrink-0 mt-1.5 relative z-10 border-2 border-white ring-1 ring-gray-100"></div>
+                    ${!isLast ? '<div class="absolute left-[5px] top-2 bottom-0 w-[1px] bg-gray-200"></div>' : ''}
+                    <div class="w-2.5 h-2.5 rounded-sm bg-brand-green shrink-0 mt-1.5 relative z-10"></div>
                     <div>
-                        <p class="text-xs text-gray-400 font-mono mb-0.5">${new Date(h.Date).toLocaleDateString()}</p>
-                        <p class="text-sm font-bold text-gray-900">${h.Action}</p>
-                        <p class="text-xs text-gray-500 mt-1 bg-gray-50 p-2 rounded">${h.Notes || 'No notes'}</p>
+                        <div class="flex items-center gap-2 mb-1">
+                             <span class="text-[10px] font-mono text-gray-400">${new Date(h.Date).toLocaleDateString()}</span>
+                        </div>
+                        <p class="text-sm font-semibold text-gray-900 leading-tight">${h.Action}</p>
+                        ${h.Notes ? `<p class="text-xs text-gray-500 mt-2 font-mono bg-gray-50 p-2 border border-gray-100 rounded-sm">${h.Notes}</p>` : ''}
                     </div>
                 `;
                 list.appendChild(el);
@@ -484,11 +462,13 @@
             }
         }
 
-        function getStatusStyle(status) {
+        function getStatusClasses(status) {
             switch(status.toLowerCase()) {
-                case 'overdue': return 'bg-brand-danger text-white';
-                case 'urgent': return 'bg-brand-warn text-brand-black';
-                default: return 'bg-brand-success text-white';
+                // Subtle semantic colors
+                case 'overdue': return 'bg-white border-red-200 text-red-700';
+                case 'urgent': return 'bg-white border-amber-200 text-amber-700';
+                // Green for success/normal
+                default: return 'bg-white border-brand-green/30 text-brand-green';
             }
         }
 
@@ -507,4 +487,3 @@
     </script>
 </body>
 </html>
-
